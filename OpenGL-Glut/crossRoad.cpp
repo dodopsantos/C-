@@ -24,7 +24,6 @@ void anima(int valor);
 void update(int valor); int interval = 200;
 void display(void);
 void tela(GLsizei W, GLsizei h);
-GLuint LoadTexture(const char * filename);
 
 //Movimento da bola
 float tx0 = 500, tx1 = -500, tx2 = 500, tx3 = -500, tx4 = 500, tx5 = -500, tx6 = 500, tx7 = -500, tx8 = 500, tx9 = -500;
@@ -109,6 +108,7 @@ void anima(int valor) {
 
 }
 void keyboard() {
+	if (p1Y > 250) Sleep(2000), exit(0);
 
 	if (GetAsyncKeyState(VK_UP)) if (p1Y < 250) p1Y += 50;
 	if (GetAsyncKeyState(VK_DOWN)) if (p1Y > -250) p1Y -= 50;
@@ -117,54 +117,7 @@ void keyboard() {
 	if (GetAsyncKeyState(VK_LEFT)) if (p1X > -500) p1X -= 50;
 
 }
-GLuint LoadTexture(const char * filename)
-{
 
-	GLuint texture;
-
-	int width, height;
-
-	unsigned char * data;
-
-	FILE * file;
-
-#pragma warning(disable:4996)
-	file = fopen(filename, "rb");
-	if (file == NULL) return 0;
-	width = 1024;
-	height = 512;
-	data = (unsigned char *)malloc(width * height * 3);
-	//int size = fseek(file,);
-	fread(data, width * height * 3, 1, file);
-	fclose(file);
-
-	for (int i = 0; i < width * height; ++i)
-	{
-		int index = i * 3;
-		unsigned char B, R;
-		B = data[index];
-		R = data[index + 2];
-
-		data[index] = R;
-		data[index + 2] = B;
-
-	}
-
-
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-	free(data);
-
-	return texture;
-}
 void environment() {
 
 	//Principal road
@@ -267,15 +220,54 @@ int stripes(int x) {
 void player1() {
 
 	glPushMatrix();
-
+	
 	glBegin(GL_QUADS);
-	glColor3ub(0, 0, 0);
+	glColor3ub(245, 233, 66);
 	glVertex2f(p1X, p1Y + p1Alt);
 	glVertex2f(p1X + p1Comp, p1Y + p1Alt);
 	glVertex2f(p1X + p1Comp, p1Y);
 	glVertex2f(p1X, p1Y);
 	glEnd();
 
+	glBegin(GL_QUADS);
+	glColor3ub(245, 233, 66);
+	glVertex2f(p1X + 15, p1Y + p1Alt + 10);
+	glVertex2f(p1X + p1Comp + 5, p1Y + p1Alt + 5);
+	glVertex2f(p1X + 15, p1Y + 10);
+	glVertex2f(p1X + 15, p1Y + 10);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glColor3ub(255, 0, 0);
+	glVertex2f(p1X + 15, p1Y + p1Alt + 10);
+	glVertex2f(p1X - p1Comp + 30, p1Y + p1Alt + 5);
+	glVertex2f(p1X + 15, p1Y + 10);
+	glVertex2f(p1X + 15, p1Y + 10);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glColor3ub(255, 255, 255);
+	glVertex2f(p1X - 10, p1Y + p1Alt);
+	glVertex2f(p1X + p1Comp, p1Y + p1Alt);
+	glVertex2f(p1X + p1Comp, p1Y + 4);
+	glVertex2f(p1X, p1Y + 8);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glColor3ub(82, 70, 52);
+	glVertex2f(p1X +14, p1Y);
+	glVertex2f(p1X + p1Comp -3, p1Y);
+	glVertex2f(p1X + p1Comp -3, p1Y - 8);
+	glVertex2f(p1X + 14, p1Y - 8);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glColor3ub(82, 70, 52);
+	glVertex2f(p1X + 4, p1Y);
+	glVertex2f(p1X + p1Comp - 13, p1Y);
+	glVertex2f(p1X + p1Comp - 13, p1Y - 8);
+	glVertex2f(p1X + 4, p1Y - 8);
+	glEnd();
 	glPopMatrix();
 
 }
@@ -287,7 +279,23 @@ float Car(float tx, float ty) {
 	GLfloat ang, raioX = 10.0f, raioY = 10.0f;
 
 	glTranslatef(tx, ty, 0);
-	glColor3f(1, 1, 1);
+	glBegin(GL_QUADS);
+	glColor3ub(0, 0, 0);
+	glVertex2f(-20, -10);
+	glVertex2f(-20, 10);
+	glVertex2f(-5, 10);
+	glVertex2f(-5, -10);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glColor3ub(0, 0, 0);
+	glVertex2f(5, -10);
+	glVertex2f(5, 10);
+	glVertex2f(20, 10);
+	glVertex2f(20, -10);
+	glEnd();	
+
+	glColor3ub(255, 255 ,255);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < circ_pnt; i++) {
 		ang = (2 * PI * i) / circ_pnt;
@@ -295,6 +303,13 @@ float Car(float tx, float ty) {
 	}
 	glEnd();
 
+	glBegin(GL_QUADS);
+	glColor3ub(rand() % 255, rand() % 255, rand() % 255);
+	glVertex2f(4, -7);
+	glVertex2f(4, 7);
+	glVertex2f(-4, 7);
+	glVertex2f(-4, -7);
+	glEnd();
 	glPopMatrix();
 	return true;
 
@@ -325,10 +340,6 @@ void display()
 	Car(tx7, ty7);
 	Car(tx8, ty8);
 	Car(tx9, ty9);
-
-	/*GLuint texture;
-	texture = LoadTexture("blobsheet_0.bmp");
-	glBindTexture(GL_TEXTURE_2D, texture);*/
 
 	glFlush();
 
